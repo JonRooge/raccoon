@@ -42,6 +42,7 @@ import sys
 import threading
 import time
 import uuid
+import chardet
 
 from serial.tools.list_ports import comports
 
@@ -127,7 +128,8 @@ def adv_info_for_data(adv_data):
     info = []
     for (item_type, item_data) in adv_parser(adv_data):
         if item_type == 8 or item_type == 9:
-            info.append( "Name: '%s'" % item_data.decode('utf-8'))
+            coding = chardet.detect(item_data).get('encoding')
+            info.append( "Name: '%s'" % item_data.decode(coding))
         if item_type == 2 or item_type == 3:
             info.append ("UUID16: %04X" % unpack_from('<H', item_data))
         if item_type == 4 or item_type == 5:
